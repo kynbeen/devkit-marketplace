@@ -1,0 +1,10 @@
+# Local credentials and configuration
+.env
+*.token
+
+# Runtime and validation artifacts
+__pycache__/
+*.py[cod]
+*.log
+.tmp/
+

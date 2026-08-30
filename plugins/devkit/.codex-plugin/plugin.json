@@ -1,0 +1,31 @@
+{
+  "name": "devkit",
+  "version": "0.9.0",
+  "description": "의도 우선 작업, 명세, 백로그, 세션 인계와 개인 설정을 Claude Code와 Codex에서 공유하는 개발 워크플로.",
+  "author": {
+    "name": "kynbeen"
+  },
+  "homepage": "https://github.com/kynbeen/devkit-marketplace",
+  "repository": "https://github.com/kynbeen/devkit-marketplace",
+  "license": "MIT",
+  "keywords": [
+    "development-workflow",
+    "handoff",
+    "intent-first",
+    "codex",
+    "claude-code"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "devkit",
+    "shortDescription": "의도 우선 개발과 세션 인계 워크플로",
+    "longDescription": "Claude Code와 Codex에서 같은 의도 우선 원칙, 명세, 백로그, 핸드오프와 개인 작업 설정을 사용합니다.",
+    "developerName": "kynbeen",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": "devkit으로 이 작업의 의도와 성공 기준을 정리해줘."
+  }
+}

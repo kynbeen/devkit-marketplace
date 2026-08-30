@@ -1,0 +1,20 @@
+{
+  "name": "devkit",
+  "interface": {
+    "displayName": "kynbeen devkit"
+  },
+  "plugins": [
+    {
+      "name": "devkit",
+      "source": {
+        "source": "local",
+        "path": "./plugins/devkit"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
