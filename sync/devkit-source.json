@@ -1,0 +1,36 @@
+{
+  "sourceRepository": "../devkit",
+  "sourceCommit": "350e9e6aeadd84d5279d2cbcb6e909c648bf2bc6",
+  "verbatimFiles": [
+    "commands/clarify.md",
+    "commands/handoff.md",
+    "commands/resume.md",
+    "commands/spec.md",
+    "hooks/hooks.json",
+    "hooks/intent-policy.md",
+    "hooks/intent-reminder.md",
+    "hooks/preferences.md",
+    "skills/devkit-clarify/SKILL.md",
+    "skills/devkit-handoff/SKILL.md",
+    "skills/devkit-prefs/SKILL.md",
+    "skills/devkit-resume/SKILL.md",
+    "skills/devkit-spec/SKILL.md"
+  ],
+  "adaptedFiles": {
+    "commands/backlog.md": "4FD8D82108D2A3AA88218167B190A14BA865693D8F1046E10DE52104C97ABD14",
+    "commands/prefs.md": "C915B7E19214EB452DF02835A869F45F437F879427ED8AA51EE7C7F67AF77687",
+    "skills/devkit-backlog/SKILL.md": "E5AE5E02CCE3BCBBE91D1FC9E26445EC62C2CB6C09BFAA237F408DE403007F18"
+  },
+  "excludedPaths": [
+    "commands/review.md",
+    "skills/devkit-review",
+    "tools/autodev",
+    "tools/bridge"
+  ],
+  "marketplaceOnlyPaths": [
+    "commands/help.md",
+    "skills/devkit-help",
+    ".claude-plugin",
+    ".codex-plugin"
+  ]
+}

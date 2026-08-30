@@ -9,7 +9,7 @@
       "name": "devkit",
       "source": "./plugins/devkit",
       "description": "의도 구체화, 명세, 백로그, 세션 인계와 개인 작업 설정 동기화",
-      "version": "0.9.0"
+      "version": "0.10.0"
     }
   ]
 }

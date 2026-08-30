@@ -10,6 +10,10 @@ marketplace.
 - Do not add unattended development tooling, Telegram integration, or the review workflow.
 - Never commit credentials, tokens, user identifiers, or machine-local configuration.
 - Keep Claude and Codex plugin versions equal to the Claude marketplace entry version.
+- Synchronize from the private full devkit only through `scripts/sync-from-devkit.ps1`; never mirror
+  the two repositories bidirectionally.
+- Keep installation, first-use, update, and troubleshooting instructions current in
+  `docs/GETTING_STARTED.md` whenever commands or host behavior change.
 
 ## Validation
 
@@ -18,6 +22,7 @@ repository root:
 
 ```powershell
 pwsh -File scripts/validate.ps1
+pwsh -File scripts/sync-from-devkit.ps1
 claude plugin validate .
 ```
 

@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $pluginRoot = Join-Path $repositoryRoot "plugins/devkit"
-$expectedWorkflows = @("backlog", "clarify", "handoff", "prefs", "resume", "spec")
+$expectedWorkflows = @("backlog", "clarify", "handoff", "help", "prefs", "resume", "spec")
 
 function Assert-Condition {
     param(
@@ -51,6 +51,7 @@ $claudeManifest = Read-JsonFile (Join-Path $pluginRoot ".claude-plugin/plugin.js
 $codexManifest = Read-JsonFile (Join-Path $pluginRoot ".codex-plugin/plugin.json")
 $claudeMarketplace = Read-JsonFile (Join-Path $repositoryRoot ".claude-plugin/marketplace.json")
 $codexMarketplace = Read-JsonFile (Join-Path $repositoryRoot ".agents/plugins/marketplace.json")
+$syncState = Read-JsonFile (Join-Path $repositoryRoot "sync/devkit-source.json")
 
 Assert-Condition ($claudeManifest.name -eq "devkit") "Claude plugin name must be devkit."
 Assert-Condition ($codexManifest.name -eq "devkit") "Codex plugin name must be devkit."
@@ -58,6 +59,8 @@ Assert-Condition ($claudeMarketplace.plugins.Count -eq 1) "Claude marketplace mu
 Assert-Condition ($codexMarketplace.plugins.Count -eq 1) "Codex marketplace must contain one plugin."
 Assert-Condition ($claudeMarketplace.plugins[0].source -eq "./plugins/devkit") "Unexpected Claude marketplace source."
 Assert-Condition ($codexMarketplace.plugins[0].source.path -eq "./plugins/devkit") "Unexpected Codex marketplace source."
+Assert-Condition ($syncState.verbatimFiles.Count -gt 0) "Sync state must declare verbatim files."
+Assert-Condition (@($syncState.adaptedFiles.PSObject.Properties).Count -gt 0) "Sync state must declare adapted files."
 
 $versions = @(@(
     [string]$claudeManifest.version,
@@ -88,4 +91,4 @@ foreach ($workflow in $expectedWorkflows) {
     Assert-Condition ($skillText.Contains("../../commands/$workflow.md")) "Skill does not link to its command: devkit-$workflow"
 }
 
-Write-Host "PASS: devkit $($versions[0]) contains exactly the six supported workflows."
+Write-Host "PASS: devkit $($versions[0]) contains exactly the seven supported workflows."

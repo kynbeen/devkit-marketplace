@@ -1,7 +1,7 @@
 {
   "name": "devkit",
-  "version": "0.9.0",
-  "description": "의도 우선 작업, 명세, 백로그, 세션 인계와 개인 설정을 Claude Code와 Codex에서 공유하는 개발 워크플로.",
+  "version": "0.10.0",
+  "description": "의도 우선 작업, 명세, 백로그, 세션 인계, 도움말과 개인 설정을 Claude Code와 Codex에서 공유하는 개발 워크플로.",
   "author": {
     "name": "kynbeen"
   },
@@ -26,6 +26,10 @@
       "Interactive",
       "Write"
     ],
-    "defaultPrompt": "devkit으로 이 작업의 의도와 성공 기준을 정리해줘."
+    "defaultPrompt": [
+      "devkit 사용법과 지금 필요한 워크플로를 알려줘.",
+      "이 요청의 목표와 성공 기준을 devkit으로 구체화해줘.",
+      "현재 작업을 다음 세션으로 안전하게 인계해줘."
+    ]
   }
 }
