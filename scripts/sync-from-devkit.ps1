@@ -151,6 +151,32 @@ if ($AcceptAdapted) {
 }
 Write-JsonFile $statePath $state
 
+# Release instructions carry a copy-pasteable version number. Left alone it falls behind the
+# release it documents, and the -Version guard above then rejects the very command the docs tell
+# you to run. Push the examples one minor ahead of what was just published.
+$applied = [version]$Version
+$exampleVersion = "$($applied.Major).$($applied.Minor + 1).0"
+$examplePatterns = @(
+    '(?<=-Version )\d+\.\d+\.\d+',
+    '(?<=sync devkit release )\d+\.\d+\.\d+'
+)
+$exampleDocuments = @(
+    (Join-Path $marketplaceRoot "docs/MAINTAINING.md"),
+    (Join-Path $marketplaceRoot "README.md")
+)
+foreach ($documentPath in $exampleDocuments) {
+    Assert-Condition (Test-Path -LiteralPath $documentPath -PathType Leaf) "릴리스 예시를 담은 문서가 없습니다: $documentPath"
+    $original = [IO.File]::ReadAllText($documentPath)
+    $updated = $original
+    foreach ($pattern in $examplePatterns) {
+        $updated = [Text.RegularExpressions.Regex]::Replace($updated, $pattern, $exampleVersion)
+    }
+    if ($updated -ne $original) {
+        [IO.File]::WriteAllText($documentPath, $updated, [Text.UTF8Encoding]::new($false))
+        Write-Output "Release examples now read $exampleVersion in $([IO.Path]::GetFileName($documentPath))."
+    }
+}
+
 & (Join-Path $PSScriptRoot "validate.ps1")
 if ($LASTEXITCODE -ne 0) { throw "marketplace 검증에 실패했습니다." }
 
