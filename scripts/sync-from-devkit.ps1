@@ -38,6 +38,18 @@ function Get-GitOutput {
     return @($output)
 }
 
+function Get-TargetRelativePath {
+    param([string]$RelativePath)
+    if ($null -ne $state.pathRewrites) {
+        foreach ($rewrite in $state.pathRewrites.PSObject.Properties) {
+            if ($RelativePath.StartsWith($rewrite.Name)) {
+                return $rewrite.Value + $RelativePath.Substring($rewrite.Name.Length)
+            }
+        }
+    }
+    return $RelativePath
+}
+
 function Get-Hash {
     param([string]$Path)
     if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) { return $null }
@@ -60,7 +72,7 @@ $targetDirty = Get-GitOutput $marketplaceRoot @("status", "--porcelain", "--untr
 $verbatimDrift = @()
 foreach ($relativePath in $state.verbatimFiles) {
     $sourcePath = Join-Path $SourceRoot $relativePath
-    $targetPath = Join-Path $pluginRoot $relativePath
+    $targetPath = Join-Path $pluginRoot (Get-TargetRelativePath $relativePath)
     if ((Get-Hash $sourcePath) -ne (Get-Hash $targetPath)) {
         $verbatimDrift += $relativePath
     }
@@ -76,8 +88,10 @@ foreach ($property in $state.adaptedFiles.PSObject.Properties) {
 
 $excludedPresent = @()
 foreach ($relativePath in $state.excludedPaths) {
-    if (Test-Path -LiteralPath (Join-Path $pluginRoot $relativePath)) {
-        $excludedPresent += $relativePath
+    foreach ($candidate in @($relativePath, (Get-TargetRelativePath $relativePath)) | Select-Object -Unique) {
+        if (Test-Path -LiteralPath (Join-Path $pluginRoot $candidate)) {
+            $excludedPresent += $candidate
+        }
     }
 }
 
@@ -110,7 +124,7 @@ Assert-Condition ([version]$Version -gt [version]$currentVersion) "새 버전은
 
 foreach ($relativePath in $state.verbatimFiles) {
     $sourcePath = Join-Path $SourceRoot $relativePath
-    $targetPath = Join-Path $pluginRoot $relativePath
+    $targetPath = Join-Path $pluginRoot (Get-TargetRelativePath $relativePath)
     Assert-Condition (Test-Path -LiteralPath $sourcePath -PathType Leaf) "원본 파일이 없습니다: $relativePath"
     New-Item -ItemType Directory -Path (Split-Path -Parent $targetPath) -Force | Out-Null
     Copy-Item -LiteralPath $sourcePath -Destination $targetPath -Force

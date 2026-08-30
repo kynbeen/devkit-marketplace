@@ -6,7 +6,10 @@ marketplace.
 ## Distribution boundary
 
 - Keep `plugins/devkit/commands/` as the shared workflow source.
-- Keep `plugins/devkit/skills/devkit-*/SKILL.md` as thin Codex adapters to those commands.
+- Keep `plugins/devkit/codex-skills/devkit-*/SKILL.md` as thin Codex adapters to those commands.
+- Never create `plugins/devkit/skills/`. Both hosts add that directory to component discovery
+  automatically and no manifest field can remove it, so adapters placed there ship to Claude Code
+  as a duplicate `/devkit:devkit-*` command set. `scripts/validate.ps1` enforces this.
 - Do not add unattended development tooling, Telegram integration, or the review workflow.
 - Never commit credentials, tokens, user identifiers, or machine-local configuration.
 - Keep Claude and Codex plugin versions equal to the Claude marketplace entry version.

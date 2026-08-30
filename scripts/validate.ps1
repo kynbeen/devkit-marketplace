@@ -47,6 +47,25 @@ function Get-LeafNames {
     } | Sort-Object)
 }
 
+function Get-TargetRelativePath {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$RelativePath,
+
+        [object]$Rewrites
+    )
+
+    if ($null -ne $Rewrites) {
+        foreach ($rewrite in $Rewrites.PSObject.Properties) {
+            if ($RelativePath.StartsWith($rewrite.Name)) {
+                return $rewrite.Value + $RelativePath.Substring($rewrite.Name.Length)
+            }
+        }
+    }
+
+    return $RelativePath
+}
+
 $claudeManifest = Read-JsonFile (Join-Path $pluginRoot ".claude-plugin/plugin.json")
 $codexManifest = Read-JsonFile (Join-Path $pluginRoot ".codex-plugin/plugin.json")
 $claudeMarketplace = Read-JsonFile (Join-Path $repositoryRoot ".claude-plugin/marketplace.json")
@@ -69,14 +88,21 @@ $versions = @(@(
 ) | Select-Object -Unique)
 Assert-Condition ($versions.Count -eq 1) "Claude, Codex, and marketplace versions must match."
 
+# Claude Code discovers every directory named skills/ at the plugin root and ADDS it to the
+# components it already found in commands/. A skills/ directory here would therefore publish the
+# Codex adapters to Claude Code as a second, duplicate set of /devkit:devkit-* commands.
+Assert-Condition (-not (Test-Path -LiteralPath (Join-Path $pluginRoot "skills"))) "plugins/devkit/skills exists: Claude Code would load the Codex adapters as duplicate commands. Keep them in codex-skills/."
+Assert-Condition ($codexManifest.skills -eq "./codex-skills/") "Codex manifest must point skills at ./codex-skills/."
+
 $commands = Get-LeafNames (Join-Path $pluginRoot "commands") "File"
-$skills = Get-LeafNames (Join-Path $pluginRoot "skills") "Directory"
+$codexSkills = Get-LeafNames (Join-Path $pluginRoot "codex-skills") "Directory"
 Assert-Condition (($commands -join ',') -eq ($expectedWorkflows -join ',')) "Unexpected command set: $($commands -join ', ')"
-Assert-Condition (($skills -join ',') -eq ($expectedWorkflows -join ',')) "Unexpected skill set: $($skills -join ', ')"
+Assert-Condition (($codexSkills -join ',') -eq ($expectedWorkflows -join ',')) "Unexpected Codex skill set: $($codexSkills -join ', ')"
 
 $forbiddenPaths = @(
     "commands/review.md",
     "skills/devkit-review",
+    "codex-skills/devkit-review",
     "tools/autodev",
     "tools/bridge"
 )
@@ -84,11 +110,16 @@ foreach ($relativePath in $forbiddenPaths) {
     Assert-Condition (-not (Test-Path -LiteralPath (Join-Path $pluginRoot $relativePath))) "Excluded path is present: $relativePath"
 }
 
-foreach ($workflow in $expectedWorkflows) {
-    $skillPath = Join-Path $pluginRoot "skills/devkit-$workflow/SKILL.md"
-    Assert-Condition (Test-Path -LiteralPath $skillPath -PathType Leaf) "Missing skill: devkit-$workflow"
-    $skillText = Get-Content -LiteralPath $skillPath -Raw -Encoding UTF8
-    Assert-Condition ($skillText.Contains("../../commands/$workflow.md")) "Skill does not link to its command: devkit-$workflow"
+foreach ($relativePath in $syncState.excludedPaths) {
+    $targetPath = Get-TargetRelativePath $relativePath $syncState.pathRewrites
+    Assert-Condition (-not (Test-Path -LiteralPath (Join-Path $pluginRoot $targetPath))) "Excluded path is present: $targetPath"
 }
 
-Write-Host "PASS: devkit $($versions[0]) contains exactly the seven supported workflows."
+foreach ($workflow in $expectedWorkflows) {
+    $skillPath = Join-Path $pluginRoot "codex-skills/devkit-$workflow/SKILL.md"
+    Assert-Condition (Test-Path -LiteralPath $skillPath -PathType Leaf) "Missing Codex skill: devkit-$workflow"
+    $skillText = Get-Content -LiteralPath $skillPath -Raw -Encoding UTF8
+    Assert-Condition ($skillText.Contains("../../commands/$workflow.md")) "Codex skill does not link to its command: devkit-$workflow"
+}
+
+Write-Host "PASS: devkit $($versions[0]) publishes exactly seven Claude Code commands and seven Codex-only adapters."

@@ -7,7 +7,8 @@ devkit은 Claude Code와 Codex에서 개발 요청을 구체화하고, 명세와
 
 - Git
 - Claude Code 또는 Codex CLI 최신 버전
-- Windows에서 Claude Code 훅을 쓸 때는 Git for Windows의 Git Bash
+- Windows에서 Claude Code 훅은 Git Bash가 있으면 Git Bash로, 없으면 PowerShell로 실행됩니다.
+  devkit 훅은 두 환경 모두에서 동작하므로 Git for Windows는 선택 사항입니다.
 
 터미널에서 사용할 클라이언트가 실행되는지 먼저 확인합니다.
 
@@ -28,8 +29,17 @@ claude plugin install devkit@devkit
 claude plugin list
 ```
 
-목록에서 `devkit@devkit`이 enabled로 나오면 설치된 것입니다. 새 Claude Code 세션을 시작해야
-명령과 세션 시작 훅이 적용됩니다.
+목록에서 `devkit@devkit`이 enabled로 나오면 설치된 것입니다. 설치에는 재시작이 필요하지
+않습니다. Claude Code가 `Run /reload-plugins to activate.`라고 안내할 때만 실행 중인 세션에서
+`/reload-plugins`를 실행하세요. 어느 쪽이든 `/devkit:` 을 입력하면 일곱 개 워크플로가 보입니다.
+
+설치된 구성 요소를 직접 확인하려면:
+
+```bash
+claude plugin details devkit
+```
+
+`Skills (7)`에 `backlog, clarify, handoff, help, prefs, resume, spec`이 나오면 정상입니다.
 
 ### Codex CLI
 
@@ -112,7 +122,8 @@ codex plugin marketplace upgrade devkit
 codex plugin add devkit@devkit
 ```
 
-업데이트 후에도 새 세션이나 새 스레드를 시작해야 새 버전이 적용됩니다.
+설치와 달리 **업데이트는 적용에 재시작이 필요합니다.** `claude plugin update`가 이 점을 스스로
+안내합니다. 새 Claude Code 세션 또는 새 Codex 스레드를 시작하세요.
 
 ## 6. 제거
 
@@ -132,13 +143,24 @@ codex plugin remove devkit@devkit
 ### 명령이나 스킬이 보이지 않음
 
 1. `plugin list`에서 `devkit@devkit`이 enabled인지 확인합니다.
-2. 설치·업데이트 직후라면 새 세션 또는 새 스레드를 엽니다.
+2. Claude Code에서는 `/reload-plugins`를 실행합니다. 업데이트 직후라면 새 세션을 엽니다.
+   Codex에서는 새 스레드를 엽니다.
 3. 같은 이름의 예전 로컬 devkit이 있다면 중복 설치를 제거합니다.
+
+### `/devkit:` 에 워크플로가 열네 개로 보임
+
+`devkit-clarify`처럼 `devkit-`이 한 번 더 붙은 항목이 같이 보인다면 0.10.0 이하 버전입니다.
+그 버전은 Codex 전용 어댑터를 Claude Code도 읽는 위치에 두고 있었습니다. 업데이트하세요.
+
+```bash
+claude plugin marketplace update devkit
+claude plugin update devkit@devkit
+```
 
 ### Claude Code에서 Windows 훅이 실패함
 
-Git for Windows를 설치하고 Git Bash가 실행 가능한지 확인합니다. 훅은 `cat`으로 Markdown 파일을
-읽기 때문에 Windows의 Claude Code에서는 Git Bash 환경이 필요합니다.
+훅은 `cat`으로 Markdown 파일 하나를 읽을 뿐이고, Git Bash와 PowerShell 양쪽에서 동작합니다.
+그래도 실패한다면 `claude plugin details devkit`에 `Hooks (2)`가 나오는지 먼저 확인하세요.
 
 ### 개인 설정이 다른 사람 설정과 섞일까 걱정됨
 

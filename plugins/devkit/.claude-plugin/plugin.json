@@ -1,12 +1,19 @@
 {
   "name": "devkit",
   "displayName": "devkit",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "의도 우선 프롬프트 구체화 + 명세·백로그 + 세션·기기 간 핸드오프 + 개인 설정 동기화.",
   "author": {
     "name": "kynbeen"
   },
   "homepage": "https://github.com/kynbeen/devkit-marketplace",
   "repository": "https://github.com/kynbeen/devkit-marketplace",
-  "license": "MIT"
+  "license": "MIT",
+  "keywords": [
+    "development-workflow",
+    "handoff",
+    "intent-first",
+    "codex",
+    "claude-code"
+  ]
 }

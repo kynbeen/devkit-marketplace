@@ -22,7 +22,9 @@ codex plugin marketplace add kynbeen/devkit-marketplace
 codex plugin add devkit@devkit
 ```
 
-설치 후 새 세션이나 새 스레드를 열고 `/devkit:help` 또는 `$devkit-help`를 실행하세요.
+설치 직후 바로 `/devkit:help` 또는 `$devkit-help`를 실행하면 됩니다. Claude Code가
+`Run /reload-plugins to activate.`라고 안내하면 그때만 `/reload-plugins`를 실행하세요. Codex는
+새 스레드를 열어야 스킬과 훅이 적용됩니다.
 
 ## 포함된 기능
 
@@ -43,13 +45,19 @@ codex plugin add devkit@devkit
 ## Claude Code와 Codex의 관계
 
 Codex가 Claude Code를 호출하는 구조는 아닙니다. `commands/*.md`가 공통 워크플로 원본이고,
-Claude Code는 이를 명령으로 직접 읽습니다. Codex의 `skills/*/SKILL.md`는 같은 원본을 가리키며
-호출 문법과 프로젝트 지침 차이만 번역하는 얇은 어댑터입니다.
+Claude Code는 이를 명령으로 직접 읽습니다. Codex의 `codex-skills/*/SKILL.md`는 같은 원본을
+가리키며 호출 문법과 프로젝트 지침 차이만 번역하는 얇은 어댑터입니다.
 
 ```text
 commands/*.md ──┬── Claude Code: /devkit:<name>
-                └── Codex: skills/*/SKILL.md → $devkit-<name>
+                └── Codex: codex-skills/*/SKILL.md → $devkit-<name>
 ```
+
+어댑터를 `skills/`가 아니라 `codex-skills/`에 두는 이유는, Claude Code가 플러그인 루트의
+`skills/`를 **자동으로 추가 검색**하기 때문입니다. 거기에 두면 Claude Code가 `commands/`의 일곱
+개에 더해 Codex 어댑터까지 읽어 워크플로가 열네 개로 보입니다. Codex는
+`.codex-plugin/plugin.json`의 `skills` 경로를 따르므로 위치를 옮겨도 그대로 일곱 개를
+발견합니다.
 
 자세한 구조와 공개판의 예외는 [아키텍처 설명](docs/ARCHITECTURE.md)에 있습니다.
 
@@ -88,8 +96,8 @@ codex plugin marketplace add kynbeen/devkit-marketplace
 codex plugin add devkit@devkit
 ```
 
-설치 후에는 새 세션이나 새 스레드를 시작해야 스킬과 `SessionStart` 훅이 적용됩니다. Codex가
-플러그인 훅을 처음 발견하면 내용을 검토하고 신뢰하는 절차가 필요합니다.
+Codex는 설치 후 새 스레드를 시작해야 스킬과 `SessionStart` 훅이 적용됩니다. Codex가 플러그인
+훅을 처음 발견하면 내용을 검토하고 신뢰하는 절차가 필요합니다.
 
 ## 업데이트
 
@@ -103,7 +111,9 @@ codex plugin marketplace upgrade devkit
 codex plugin add devkit@devkit
 ```
 
-업데이트 후에는 새 Claude Code 세션 또는 새 Codex 스레드를 시작해야 새 워크플로가 적용됩니다.
+`claude plugin update`는 적용에 재시작이 필요하다고 스스로 안내합니다. 업데이트 후에는 새
+Claude Code 세션 또는 새 Codex 스레드를 시작하세요. (처음 **설치**할 때는 재시작이 필요하지
+않습니다. 위의 1분 설치를 참고하세요.)
 
 ## 개인 설정을 기기 간 동기화하려면
 
@@ -124,7 +134,9 @@ upstream인 `kynbeen/devkit-marketplace`에는 다른 사용자가 푸시할 수
 ## 호환성과 전제
 
 - Claude Code와 Codex CLI의 플러그인 marketplace를 대상으로 합니다.
-- Claude Code의 셸 형식 훅은 Windows에서 Git Bash를 사용하므로 Git for Windows가 필요합니다.
+- Claude Code의 셸 형식 훅은 Windows에서 Git Bash가 있으면 Git Bash로, 없으면 PowerShell로
+  실행됩니다. devkit 훅은 `cat` 한 줄만 쓰고 플러그인 경로는 Claude Code가 미리 치환하므로 두
+  환경 모두에서 동작합니다.
 - `handoff`, `spec`, `prefs`는 요청에 따라 파일 작성, Git 커밋 또는 푸시를 수행할 수 있습니다.
   실행 전에 플러그인 소스와 워크플로를 검토하세요.
 
@@ -139,7 +151,7 @@ upstream인 `kynbeen/devkit-marketplace`에는 다른 사용자가 푸시할 수
 pwsh -File scripts/sync-from-devkit.ps1
 
 # 검토 후 새 버전으로 반영
-pwsh -File scripts/sync-from-devkit.ps1 -Mode Apply -Version 0.11.0
+pwsh -File scripts/sync-from-devkit.ps1 -Mode Apply -Version 0.12.0
 ```
 
 그대로 복사할 파일과 수동으로 유지할 공개판 어댑터를 구분합니다. 전체 정책과 릴리스 순서는
@@ -157,8 +169,8 @@ devkit-marketplace/
 └── plugins/devkit/
     ├── .claude-plugin/plugin.json
     ├── .codex-plugin/plugin.json
-    ├── commands/
-    ├── skills/
+    ├── commands/       공통 워크플로 원본 (Claude Code가 직접 읽음)
+    ├── codex-skills/   Codex 전용 얇은 어댑터
     └── hooks/
 ```
 

@@ -1,6 +1,9 @@
 {
   "sourceRepository": "../devkit",
   "sourceCommit": "350e9e6aeadd84d5279d2cbcb6e909c648bf2bc6",
+  "pathRewrites": {
+    "skills/": "codex-skills/"
+  },
   "verbatimFiles": [
     "commands/clarify.md",
     "commands/handoff.md",

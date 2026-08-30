@@ -15,6 +15,12 @@
 - `adaptedFiles`: 원본 변경을 감지하되 공개판에 맞게 사람이 반영해야 하는 파일
 - `excludedPaths`: 공개 패키지에 절대 들어오면 안 되는 경로
 - `marketplaceOnlyPaths`: 도움말과 호스트 manifest 등 공개판이 소유하는 파일
+- `pathRewrites`: 원본과 배포본의 디렉터리 이름이 다른 경우의 대응표
+
+경로 목록은 모두 **원본 devkit 기준**으로 적습니다. 원본은 Codex 어댑터를 `skills/`에 두지만
+배포본은 `codex-skills/`에 둡니다(이유는 [아키텍처 설명](ARCHITECTURE.md) 참고). 두 스크립트가
+`pathRewrites`를 읽어 복사·검사 대상 경로를 자동으로 바꾸므로, 목록에 배포본 경로를 직접 적지
+않습니다.
 
 ## 차이만 확인
 
@@ -41,13 +47,13 @@ pwsh -File scripts/sync-from-devkit.ps1 -SourceRoot D:\src\devkit
 4. 새 SemVer와 함께 Apply를 실행합니다.
 
 ```powershell
-pwsh -File scripts/sync-from-devkit.ps1 -Mode Apply -Version 0.11.0
+pwsh -File scripts/sync-from-devkit.ps1 -Mode Apply -Version 0.12.0
 ```
 
 수동 어댑터 반영을 완료했다면 그 사실을 명시적으로 승인합니다.
 
 ```powershell
-pwsh -File scripts/sync-from-devkit.ps1 -Mode Apply -Version 0.11.0 -AcceptAdapted
+pwsh -File scripts/sync-from-devkit.ps1 -Mode Apply -Version 0.12.0 -AcceptAdapted
 ```
 
 Apply는 다음을 한 번에 수행합니다.
@@ -65,7 +71,7 @@ git diff
 pwsh -File scripts/validate.ps1
 claude plugin validate .
 git add -A
-git commit -m "chore: sync devkit release 0.11.0"
+git commit -m "chore: sync devkit release 0.12.0"
 git push
 ```
 
