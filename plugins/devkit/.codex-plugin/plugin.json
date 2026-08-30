@@ -1,6 +1,6 @@
 {
   "name": "devkit",
-  "version": "0.11.0",
+  "version": "1.0.0",
   "description": "의도 우선 작업, 명세, 백로그, 세션 인계, 도움말과 개인 설정을 Claude Code와 Codex에서 공유하는 개발 워크플로.",
   "author": {
     "name": "kynbeen"

@@ -151,7 +151,7 @@ upstream인 `kynbeen/devkit-marketplace`에는 다른 사용자가 푸시할 수
 pwsh -File scripts/sync-from-devkit.ps1
 
 # 검토 후 새 버전으로 반영
-pwsh -File scripts/sync-from-devkit.ps1 -Mode Apply -Version 0.12.0
+pwsh -File scripts/sync-from-devkit.ps1 -Mode Apply -Version 1.1.0
 ```
 
 그대로 복사할 파일과 수동으로 유지할 공개판 어댑터를 구분합니다. 전체 정책과 릴리스 순서는
