@@ -8,3 +8,6 @@ __pycache__/
 *.log
 .tmp/
 
+# Maintainer session state belongs in the private development repository
+docs/handoffs/
+docs/specs/

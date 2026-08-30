@@ -14,6 +14,8 @@ marketplace.
   the two repositories bidirectionally.
 - Keep installation, first-use, update, and troubleshooting instructions current in
   `docs/GETTING_STARTED.md` whenever commands or host behavior change.
+- Do not store maintainer specs or handoffs in this public distribution repository. Record them in
+  the private full devkit development repository instead.
 
 ## Validation
 
