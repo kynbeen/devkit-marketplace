@@ -49,13 +49,13 @@ pwsh -File scripts/sync-from-devkit.ps1 -SourceRoot D:\src\devkit
 4. 새 SemVer와 함께 Apply를 실행합니다.
 
 ```powershell
-pwsh -File scripts/sync-from-devkit.ps1 -Mode Apply -Version 1.1.0
+pwsh -File scripts/sync-from-devkit.ps1 -Mode Apply -Version 1.2.0
 ```
 
 수동 어댑터 반영을 완료했다면 그 사실을 명시적으로 승인합니다.
 
 ```powershell
-pwsh -File scripts/sync-from-devkit.ps1 -Mode Apply -Version 1.1.0 -AcceptAdapted
+pwsh -File scripts/sync-from-devkit.ps1 -Mode Apply -Version 1.2.0 -AcceptAdapted
 ```
 
 Apply는 다음을 한 번에 수행합니다.
@@ -79,7 +79,7 @@ pwsh -File scripts/validate.ps1
 claude plugin validate .
 agy plugin validate plugins/devkit
 git add -A
-git commit -m "chore: sync devkit release 1.1.0"
+git commit -m "chore: sync devkit release 1.2.0"
 git push
 ```
 
