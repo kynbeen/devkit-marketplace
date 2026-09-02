@@ -1,6 +1,6 @@
 ---
 name: devkit-help
-description: devkit 설치 후 첫 사용, 워크플로 선택, Claude Code와 Codex 호출 문법을 안내한다.
+description: devkit 설치 후 첫 사용, 워크플로 선택, Claude Code와 Codex, Antigravity 호출 문법을 안내한다.
 ---
 
 # devkit 도움말

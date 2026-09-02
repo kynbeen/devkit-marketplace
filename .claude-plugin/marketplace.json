@@ -1,6 +1,6 @@
 {
   "name": "devkit",
-  "description": "Claude Code와 Codex에서 함께 쓰는 의도 우선 개발 워크플로",
+  "description": "Claude Code, Codex, Antigravity에서 함께 쓰는 의도 우선 개발 워크플로",
   "owner": {
     "name": "kynbeen"
   },

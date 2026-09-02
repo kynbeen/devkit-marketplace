@@ -1,10 +1,11 @@
 # devkit marketplace
 
-Claude Code와 Codex에서 같은 개발 원칙과 문서 형식으로 작업하기 위한 플러그인입니다. 요청의
-의도를 먼저 확인하고, 여러 세션·기기·에이전트 사이에서 명세와 핸드오프를 이어갑니다.
+Claude Code, Codex, Antigravity에서 같은 개발 원칙과 문서 형식으로 작업하기 위한 플러그인입니다.
+요청의 의도를 먼저 확인하고, 여러 세션·기기·에이전트 사이에서 명세와 핸드오프를 이어갑니다.
 
 이 저장소는 공식 플러그인 디렉터리가 아니라 **GitHub marketplace**로 배포됩니다. Claude Code와
-Codex CLI가 같은 `plugins/devkit` 패키지를 설치합니다.
+Codex CLI가 같은 `plugins/devkit` 패키지를 설치하고, Antigravity는 같은 패키지를 로컬 경로로
+설치합니다.
 
 처음 설치한다면 **[설치부터 첫 사용까지 안내서](docs/GETTING_STARTED.md)**를 따라가면 됩니다.
 
@@ -20,13 +21,21 @@ claude plugin install devkit@devkit
 # Codex CLI
 codex plugin marketplace add kynbeen/devkit-marketplace
 codex plugin add devkit@devkit
+
+# Antigravity (marketplace 등록 없이 로컬 경로로 설치)
+git clone https://github.com/kynbeen/devkit-marketplace
+agy plugin install devkit-marketplace/plugins/devkit
+agy plugin enable devkit
 ```
 
 설치 직후 바로 `/devkit:help` 또는 `$devkit-help`를 실행하면 됩니다. Claude Code가
 `Run /reload-plugins to activate.`라고 안내하면 그때만 `/reload-plugins`를 실행하세요. Codex는
-새 스레드를 열어야 스킬과 훅이 적용됩니다.
+새 스레드를 열어야 스킬과 훅이 적용됩니다. Antigravity도 새 세션부터 적용됩니다.
 
 ## 포함된 기능
+
+Antigravity는 `commands/`의 일곱 개를 자기 스킬로 변환해 읽으므로 워크플로 구성은 세 호스트가
+같습니다.
 
 | Claude Code | Codex | 기능 |
 |---|---|---|
@@ -42,22 +51,25 @@ codex plugin add devkit@devkit
 추가됩니다. 플러그인 훅은 사용자 권한으로 명령을 실행하므로, 설치 후 호스트가 표시하는 훅 내용을
 검토하고 신뢰해야 활성화됩니다.
 
-## Claude Code와 Codex의 관계
+## 세 호스트의 관계
 
-Codex가 Claude Code를 호출하는 구조는 아닙니다. `commands/*.md`가 공통 워크플로 원본이고,
-Claude Code는 이를 명령으로 직접 읽습니다. Codex의 `codex-skills/*/SKILL.md`는 같은 원본을
-가리키며 호출 문법과 프로젝트 지침 차이만 번역하는 얇은 어댑터입니다.
+한쪽이 다른 쪽을 호출하는 구조가 아닙니다. `commands/*.md`가 공통 워크플로 원본이고, 각 호스트가
+자기 방식으로 같은 파일을 읽습니다. Claude Code는 명령으로 직접 읽고, Codex의
+`codex-skills/*/SKILL.md`는 같은 원본을 가리키며 호출 문법과 프로젝트 지침 차이만 번역하는 얇은
+어댑터이며, Antigravity는 `plugin.json`을 통해 `commands/`를 자기 스킬로 변환합니다.
 
 ```text
 commands/*.md ──┬── Claude Code: /devkit:<name>
-                └── Codex: codex-skills/*/SKILL.md → $devkit-<name>
+                ├── Codex: codex-skills/*/SKILL.md → $devkit-<name>
+                └── Antigravity: plugin.json → commands/ 를 스킬로 변환
 ```
 
 어댑터를 `skills/`가 아니라 `codex-skills/`에 두는 이유는, Claude Code가 플러그인 루트의
 `skills/`를 **자동으로 추가 검색**하기 때문입니다. 거기에 두면 Claude Code가 `commands/`의 일곱
 개에 더해 Codex 어댑터까지 읽어 워크플로가 열네 개로 보입니다. Codex는
 `.codex-plugin/plugin.json`의 `skills` 경로를 따르므로 위치를 옮겨도 그대로 일곱 개를
-발견합니다.
+발견합니다. Antigravity는 `commands/`만 변환해 읽고 `codex-skills/`는 보지 않으므로, 같은 이유로
+이 패키지의 `plugin.json`에는 `skills` 경로를 선언하지 않습니다.
 
 자세한 구조와 공개판의 예외는 [아키텍처 설명](docs/ARCHITECTURE.md)에 있습니다.
 
@@ -99,6 +111,27 @@ codex plugin add devkit@devkit
 Codex는 설치 후 새 스레드를 시작해야 스킬과 `SessionStart` 훅이 적용됩니다. Codex가 플러그인
 훅을 처음 발견하면 내용을 검토하고 신뢰하는 절차가 필요합니다.
 
+### Antigravity
+
+Antigravity는 GitHub marketplace 등록을 지원하지 않고 로컬 디렉터리에서 설치합니다. 이 저장소를
+클론한 뒤 `plugins/devkit`을 지정하세요.
+
+```bash
+git clone https://github.com/kynbeen/devkit-marketplace
+agy plugin validate devkit-marketplace/plugins/devkit
+agy plugin install devkit-marketplace/plugins/devkit
+agy plugin enable devkit
+```
+
+확인:
+
+```bash
+agy plugin list
+```
+
+`devkit`의 components에 `commands`와 `hooks`가 나오면 설치된 것입니다. 새 스킬과 훅은 **새
+Antigravity 세션부터** 적용됩니다.
+
 ## 업데이트
 
 ```bash
@@ -109,11 +142,15 @@ claude plugin update devkit@devkit
 # Codex CLI
 codex plugin marketplace upgrade devkit
 codex plugin add devkit@devkit
+
+# Antigravity (클론한 저장소에서)
+git pull
+agy plugin install plugins/devkit
 ```
 
 `claude plugin update`는 적용에 재시작이 필요하다고 스스로 안내합니다. 업데이트 후에는 새
-Claude Code 세션 또는 새 Codex 스레드를 시작하세요. (처음 **설치**할 때는 재시작이 필요하지
-않습니다. 위의 1분 설치를 참고하세요.)
+Claude Code 세션, 새 Codex 스레드, 새 Antigravity 세션을 시작하세요. (처음 **설치**할 때는
+Claude Code에 재시작이 필요하지 않습니다. 위의 1분 설치를 참고하세요.)
 
 ## 개인 설정을 기기 간 동기화하려면
 
@@ -124,6 +161,7 @@ Claude Code 세션 또는 새 Codex 스레드를 시작하세요. (처음 **설�
 ```bash
 claude plugin marketplace add <github-id>/devkit-marketplace
 codex plugin marketplace add <github-id>/devkit-marketplace
+# Antigravity는 포크를 클론한 뒤 그 경로에서 설치합니다.
 ```
 
 그 후 `/devkit:prefs` 또는 `$devkit-prefs`를 실행하면 포크의
@@ -133,7 +171,8 @@ upstream인 `kynbeen/devkit-marketplace`에는 다른 사용자가 푸시할 수
 
 ## 호환성과 전제
 
-- Claude Code와 Codex CLI의 플러그인 marketplace를 대상으로 합니다.
+- Claude Code와 Codex CLI의 플러그인 marketplace, 그리고 Antigravity(`agy`)의 로컬 경로 설치를
+  대상으로 합니다. Antigravity는 GitHub marketplace 등록을 지원하지 않습니다.
 - Claude Code의 셸 형식 훅은 Windows에서 Git Bash가 있으면 Git Bash로, 없으면 PowerShell로
   실행됩니다. devkit 훅은 `cat` 한 줄만 쓰고 플러그인 경로는 Claude Code가 미리 치환하므로 두
   환경 모두에서 동작합니다.
@@ -169,7 +208,9 @@ devkit-marketplace/
 └── plugins/devkit/
     ├── .claude-plugin/plugin.json
     ├── .codex-plugin/plugin.json
-    ├── commands/       공통 워크플로 원본 (Claude Code가 직접 읽음)
+    ├── plugin.json     Antigravity 플러그인 메타
+    ├── hooks.json      Antigravity 훅 등록
+    ├── commands/       공통 워크플로 원본 (Claude Code와 Antigravity가 직접 읽음)
     ├── codex-skills/   Codex 전용 얇은 어댑터
     └── hooks/
 ```

@@ -11,8 +11,10 @@
 
 정확한 목록과 마지막 대조 상태는 [`sync/devkit-source.json`](../sync/devkit-source.json)에 있습니다.
 
-- `verbatimFiles`: 원본을 그대로 복사해도 되는 공통 워크플로·훅
-- `adaptedFiles`: 원본 변경을 감지하되 공개판에 맞게 사람이 반영해야 하는 파일
+- `verbatimFiles`: 원본을 그대로 복사해도 되는 공통 워크플로·훅(Antigravity용 루트 `hooks.json` 포함)
+- `adaptedFiles`: 원본 변경을 감지하되 공개판에 맞게 사람이 반영해야 하는 파일. Antigravity
+  매니페스트인 루트 `plugin.json`도 여기 있습니다 — 공개판은 `homepage`·`repository`·`license`가
+  다르고, 원본과 달리 `skills` 경로를 선언하지 않습니다.
 - `excludedPaths`: 공개 패키지에 절대 들어오면 안 되는 경로
 - `marketplaceOnlyPaths`: 도움말과 호스트 manifest 등 공개판이 소유하는 파일
 - `pathRewrites`: 원본과 배포본의 디렉터리 이름이 다른 경우의 대응표
@@ -59,7 +61,7 @@ pwsh -File scripts/sync-from-devkit.ps1 -Mode Apply -Version 1.1.0 -AcceptAdapte
 Apply는 다음을 한 번에 수행합니다.
 
 - `verbatimFiles`만 원본에서 복사
-- Claude·Codex manifest와 Claude marketplace 버전을 같은 값으로 변경
+- Claude·Codex·Antigravity manifest와 Claude marketplace 버전을 같은 값으로 변경
 - 대조한 원본 커밋을 동기화 상태에 기록
 - 이 문서와 README의 **릴리스 예시 버전**을 방금 낸 버전보다 한 마이너 위로 변경
 - 배포 구조 검증 실행
@@ -75,6 +77,7 @@ git diff --check
 git diff
 pwsh -File scripts/validate.ps1
 claude plugin validate .
+agy plugin validate plugins/devkit
 git add -A
 git commit -m "chore: sync devkit release 1.1.0"
 git push

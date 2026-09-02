@@ -1,7 +1,7 @@
 {
   "name": "devkit",
   "version": "1.0.0",
-  "description": "의도 우선 작업, 명세, 백로그, 세션 인계, 도움말과 개인 설정을 Claude Code와 Codex에서 공유하는 개발 워크플로.",
+  "description": "의도 우선 작업, 명세, 백로그, 세션 인계, 도움말과 개인 설정을 Claude Code, Codex, Antigravity에서 공유하는 개발 워크플로.",
   "author": {
     "name": "kynbeen"
   },
@@ -13,13 +13,14 @@
     "handoff",
     "intent-first",
     "codex",
-    "claude-code"
+    "claude-code",
+    "antigravity"
   ],
   "skills": "./codex-skills/",
   "interface": {
     "displayName": "devkit",
     "shortDescription": "의도 우선 개발과 세션 인계 워크플로",
-    "longDescription": "Claude Code와 Codex에서 같은 의도 우선 원칙, 명세, 백로그, 핸드오프와 개인 작업 설정을 사용합니다.",
+    "longDescription": "Claude Code, Codex, Antigravity에서 같은 의도 우선 원칙, 명세, 백로그, 핸드오프와 개인 작업 설정을 사용합니다.",
     "developerName": "kynbeen",
     "category": "Productivity",
     "capabilities": [

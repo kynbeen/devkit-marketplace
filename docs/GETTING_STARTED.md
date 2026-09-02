@@ -1,12 +1,12 @@
 # devkit 시작 안내서
 
-devkit은 Claude Code와 Codex에서 개발 요청을 구체화하고, 명세와 세션 인계를 같은 형식으로
-남기게 해 주는 플러그인입니다. 설치에 API 키나 별도 서버는 필요하지 않습니다.
+devkit은 Claude Code, Codex, Antigravity에서 개발 요청을 구체화하고, 명세와 세션 인계를 같은
+형식으로 남기게 해 주는 플러그인입니다. 설치에 API 키나 별도 서버는 필요하지 않습니다.
 
 ## 1. 준비물
 
 - Git
-- Claude Code 또는 Codex CLI 최신 버전
+- Claude Code, Codex CLI, Antigravity(`agy`) 중 사용할 클라이언트의 최신 버전
 - Windows에서 Claude Code 훅은 Git Bash가 있으면 Git Bash로, 없으면 PowerShell로 실행됩니다.
   devkit 훅은 두 환경 모두에서 동작하므로 Git for Windows는 선택 사항입니다.
 
@@ -15,9 +15,10 @@ devkit은 Claude Code와 Codex에서 개발 요청을 구체화하고, 명세와
 ```bash
 claude --version
 codex --version
+agy plugin list
 ```
 
-둘 다 설치할 필요는 없습니다. 자신이 쓰는 클라이언트 부분만 따라 하면 됩니다.
+전부 설치할 필요는 없습니다. 자신이 쓰는 클라이언트 부분만 따라 하면 됩니다.
 
 ## 2. 설치
 
@@ -54,6 +55,25 @@ codex plugin list
 
 플러그인이나 훅을 처음 활성화할 때 신뢰 확인이 나오면 표시된 저장소와 훅 내용을 읽고 승인합니다.
 devkit 훅은 세션 시작과 프롬프트 제출 때 Markdown 지침을 읽어 현재 대화에 추가합니다.
+
+### Antigravity
+
+Antigravity(`agy`)는 GitHub marketplace 등록을 지원하지 않습니다. 저장소를 클론하고 패키지
+디렉터리를 직접 지정해 설치합니다.
+
+```bash
+git clone https://github.com/kynbeen/devkit-marketplace
+cd devkit-marketplace
+agy plugin validate plugins/devkit
+agy plugin install plugins/devkit
+agy plugin enable devkit
+agy plugin list
+```
+
+`agy plugin validate`가 `commands : 7 processed (converted to skills)`와 `hooks : 1 processed`를
+보고하면 패키지가 정상입니다. `agy plugin list`의 `devkit` 항목에 `commands`와 `hooks`가 나오면
+설치된 것입니다. Antigravity는 `commands/`의 일곱 개를 자기 스킬로 변환해 읽고, Codex 전용
+어댑터 디렉터리는 읽지 않습니다. 새 세션부터 적용됩니다.
 
 ## 3. 첫 사용
 
@@ -120,10 +140,14 @@ claude plugin update devkit@devkit
 # Codex CLI
 codex plugin marketplace upgrade devkit
 codex plugin add devkit@devkit
+
+# Antigravity (클론한 저장소에서)
+git pull
+agy plugin install plugins/devkit
 ```
 
 설치와 달리 **업데이트는 적용에 재시작이 필요합니다.** `claude plugin update`가 이 점을 스스로
-안내합니다. 새 Claude Code 세션 또는 새 Codex 스레드를 시작하세요.
+안내합니다. 새 Claude Code 세션, 새 Codex 스레드, 새 Antigravity 세션을 시작하세요.
 
 ## 6. 제거
 
@@ -133,6 +157,9 @@ claude plugin uninstall devkit@devkit
 
 # Codex CLI
 codex plugin remove devkit@devkit
+
+# Antigravity
+agy plugin uninstall devkit
 ```
 
 필요하면 이어서 `claude plugin marketplace remove devkit` 또는
@@ -142,10 +169,11 @@ codex plugin remove devkit@devkit
 
 ### 명령이나 스킬이 보이지 않음
 
-1. `plugin list`에서 `devkit@devkit`이 enabled인지 확인합니다.
+1. `plugin list`에서 `devkit@devkit`(Antigravity는 `devkit`)이 enabled인지 확인합니다.
 2. Claude Code에서는 `/reload-plugins`를 실행합니다. 업데이트 직후라면 새 세션을 엽니다.
-   Codex에서는 새 스레드를 엽니다.
-3. 같은 이름의 예전 로컬 devkit이 있다면 중복 설치를 제거합니다.
+   Codex에서는 새 스레드를, Antigravity에서는 새 세션을 엽니다.
+3. 같은 이름의 예전 로컬 devkit이 있다면 중복 설치를 제거합니다. Antigravity에서는
+   `agy plugin uninstall devkit` 후 다시 설치합니다.
 
 ### `/devkit:` 에 워크플로가 열네 개로 보임
 

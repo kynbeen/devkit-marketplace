@@ -59,10 +59,11 @@ description: 개인 작업 설정(hooks/preferences.md)을 보거나 고치고, 
 
 ## 2. 버전을 올린다
 
-아래 세 곳의 `version`을 같은 값으로 올린다.
+아래 네 곳의 `version`을 같은 값으로 올린다.
 
 - `plugins/devkit/.claude-plugin/plugin.json`
 - `plugins/devkit/.codex-plugin/plugin.json`
+- `plugins/devkit/plugin.json` (Antigravity)
 - `.claude-plugin/marketplace.json`의 devkit 항목
 
 설정만 바뀌었으면 패치 자리(`0.9.0` → `0.9.1`), 항목 구조가 바뀌었으면 마이너 자리를 올린다.
@@ -74,6 +75,7 @@ Codex의 `.agents/plugins/marketplace.json`에는 버전 필드가 없으므로 
 git add plugins/devkit/hooks/preferences.md \
   plugins/devkit/.claude-plugin/plugin.json \
   plugins/devkit/.codex-plugin/plugin.json \
+  plugins/devkit/plugin.json \
   .claude-plugin/marketplace.json
 git commit -m "prefs: <무엇을 바꿨나>"
 git push
@@ -91,6 +93,13 @@ codex plugin marketplace upgrade devkit
 codex plugin add devkit@devkit
 ```
 
+Antigravity를 쓴다면 포크 클론에서 다시 설치한다. `agy`는 GitHub marketplace를 지원하지 않으므로
+로컬 경로로만 갱신된다.
+
+```bash
+agy plugin install plugins/devkit
+```
+
 `devkit` 이름의 marketplace가 아직 등록되지 않았다면 먼저 **자신의 포크**를 등록한다.
 
 ```bash
@@ -105,7 +114,7 @@ Claude와 Codex 모두 플러그인 이름만 주면 안 된다. `@devkit`까지
 
 - 무엇을 바꿨는지
 - 올린 버전과 커밋 해시, 푸시 성공 여부
-- Claude Code와 Codex 업데이트 결과
+- Claude Code, Codex, Antigravity 업데이트 결과
 
 마지막에 반드시 안내한다:
 

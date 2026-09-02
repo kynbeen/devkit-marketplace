@@ -68,12 +68,14 @@ function Get-TargetRelativePath {
 
 $claudeManifest = Read-JsonFile (Join-Path $pluginRoot ".claude-plugin/plugin.json")
 $codexManifest = Read-JsonFile (Join-Path $pluginRoot ".codex-plugin/plugin.json")
+$antigravityManifest = Read-JsonFile (Join-Path $pluginRoot "plugin.json")
 $claudeMarketplace = Read-JsonFile (Join-Path $repositoryRoot ".claude-plugin/marketplace.json")
 $codexMarketplace = Read-JsonFile (Join-Path $repositoryRoot ".agents/plugins/marketplace.json")
 $syncState = Read-JsonFile (Join-Path $repositoryRoot "sync/devkit-source.json")
 
 Assert-Condition ($claudeManifest.name -eq "devkit") "Claude plugin name must be devkit."
 Assert-Condition ($codexManifest.name -eq "devkit") "Codex plugin name must be devkit."
+Assert-Condition ($antigravityManifest.name -eq "devkit") "Antigravity plugin name must be devkit."
 Assert-Condition ($claudeMarketplace.plugins.Count -eq 1) "Claude marketplace must contain one plugin."
 Assert-Condition ($codexMarketplace.plugins.Count -eq 1) "Codex marketplace must contain one plugin."
 Assert-Condition ($claudeMarketplace.plugins[0].source -eq "./plugins/devkit") "Unexpected Claude marketplace source."
@@ -84,9 +86,16 @@ Assert-Condition (@($syncState.adaptedFiles.PSObject.Properties).Count -gt 0) "S
 $versions = @(@(
     [string]$claudeManifest.version,
     [string]$codexManifest.version,
+    [string]$antigravityManifest.version,
     [string]$claudeMarketplace.plugins[0].version
 ) | Select-Object -Unique)
-Assert-Condition ($versions.Count -eq 1) "Claude, Codex, and marketplace versions must match."
+Assert-Condition ($versions.Count -eq 1) "Claude, Codex, Antigravity, and marketplace versions must match."
+
+# Antigravity reads plugin.json and hooks.json at the plugin root and converts commands/ into its
+# own skills. It never reads codex-skills/, so declaring a skills path here would only reintroduce
+# the duplicate-workflow problem that moved the adapters out of skills/ in the first place.
+Assert-Condition (Test-Path -LiteralPath (Join-Path $pluginRoot "hooks.json") -PathType Leaf) "Antigravity hook registration is missing: plugins/devkit/hooks.json"
+Assert-Condition ($null -eq $antigravityManifest.skills) "Antigravity manifest must not declare a skills path."
 
 # Claude Code discovers every directory named skills/ at the plugin root and ADDS it to the
 # components it already found in commands/. A skills/ directory here would therefore publish the

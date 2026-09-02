@@ -17,6 +17,9 @@ description: devkit에서 어떤 워크플로를 언제 쓰는지 설치 후 첫
 | 이전 작업을 이어받음 | `/devkit:resume` | `$devkit-resume` | 최신 핸드오프를 확인하고 재개 |
 | 개인 작업 방식을 바꿈 | `/devkit:prefs` | `$devkit-prefs` | 자신의 marketplace 포크에 설정 동기화 |
 
+Antigravity에서는 같은 일곱 개가 `commands/`에서 변환된 스킬로 보인다. 표의 Claude Code 열을
+기준으로 읽고 호출 문법만 현재 호스트에 맞춘다.
+
 보통은 `clarify → spec → 실제 작업 → handoff → resume` 순서다. 작업이 여러 모듈로 나뉠 만큼
 클 때만 `spec` 다음에 `backlog`를 넣는다.
 

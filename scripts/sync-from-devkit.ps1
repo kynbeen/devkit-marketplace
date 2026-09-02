@@ -132,15 +132,19 @@ foreach ($relativePath in $state.verbatimFiles) {
 
 $claudeManifestPath = Join-Path $pluginRoot ".claude-plugin/plugin.json"
 $codexManifestPath = Join-Path $pluginRoot ".codex-plugin/plugin.json"
+$antigravityManifestPath = Join-Path $pluginRoot "plugin.json"
 $claudeMarketplacePath = Join-Path $marketplaceRoot ".claude-plugin/marketplace.json"
 $claudeManifest = Get-Content -LiteralPath $claudeManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
 $codexManifest = Get-Content -LiteralPath $codexManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
+$antigravityManifest = Get-Content -LiteralPath $antigravityManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
 $claudeMarketplace = Get-Content -LiteralPath $claudeMarketplacePath -Raw -Encoding UTF8 | ConvertFrom-Json
 $claudeManifest.version = $Version
 $codexManifest.version = $Version
+$antigravityManifest.version = $Version
 $claudeMarketplace.plugins[0].version = $Version
 Write-JsonFile $claudeManifestPath $claudeManifest
 Write-JsonFile $codexManifestPath $codexManifest
+Write-JsonFile $antigravityManifestPath $antigravityManifest
 Write-JsonFile $claudeMarketplacePath $claudeMarketplace
 
 $state.sourceCommit = $sourceCommit
