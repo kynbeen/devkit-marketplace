@@ -4,8 +4,8 @@ Claude Code, Codex, Antigravity에서 같은 개발 원칙과 문서 형식으�
 요청의 의도를 먼저 확인하고, 여러 세션·기기·에이전트 사이에서 명세와 핸드오프를 이어갑니다.
 
 이 저장소는 공식 플러그인 디렉터리가 아니라 **GitHub marketplace**로 배포됩니다. Claude Code와
-Codex CLI가 같은 `plugins/devkit` 패키지를 설치하고, Antigravity는 같은 패키지를 로컬 경로로
-설치합니다.
+Codex CLI가 같은 `plugins/devkit` 패키지를 설치하고, Antigravity는 `plugins/antigravity` 원격 URL로
+직접 설치합니다.
 
 처음 설치한다면 **[설치부터 첫 사용까지 안내서](docs/GETTING_STARTED.md)**를 따라가면 됩니다.
 
@@ -22,9 +22,8 @@ claude plugin install devkit@devkit
 codex plugin marketplace add kynbeen/devkit-marketplace
 codex plugin add devkit@devkit
 
-# Antigravity (marketplace 등록 없이 로컬 경로로 설치)
-git clone https://github.com/kynbeen/devkit-marketplace
-agy plugin install devkit-marketplace/plugins/antigravity
+# Antigravity (원격 URL 직접 설치)
+agy plugin install https://github.com/kynbeen/devkit-marketplace/plugins/antigravity
 agy plugin enable devkit
 ```
 
@@ -112,13 +111,10 @@ Codex는 설치 후 새 스레드를 시작해야 스킬과 `SessionStart` 훅�
 
 ### Antigravity
 
-Antigravity는 GitHub marketplace 등록을 지원하지 않고 로컬 디렉터리에서 설치합니다. 이 저장소를
-클론한 뒤 `plugins/antigravity`를 지정하세요.
+Antigravity는 깃허브 URL을 인자로 주면 리포를 직접 클론하지 않아도 원격에서 바로 설치할 수 있습니다:
 
 ```bash
-git clone https://github.com/kynbeen/devkit-marketplace
-agy plugin validate devkit-marketplace/plugins/antigravity
-agy plugin install devkit-marketplace/plugins/antigravity
+agy plugin install https://github.com/kynbeen/devkit-marketplace/plugins/antigravity
 agy plugin enable devkit
 ```
 
@@ -142,9 +138,9 @@ claude plugin update devkit@devkit
 codex plugin marketplace upgrade devkit
 codex plugin add devkit@devkit
 
-# Antigravity (클론한 저장소에서)
-git pull
-agy plugin install plugins/devkit
+# Antigravity (동일한 명령으로 업데이트)
+agy plugin install https://github.com/kynbeen/devkit-marketplace/plugins/antigravity
+agy plugin enable devkit
 ```
 
 `claude plugin update`는 적용에 재시작이 필요하다고 스스로 안내합니다. 업데이트 후에는 새

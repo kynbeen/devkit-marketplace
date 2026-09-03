@@ -31,7 +31,7 @@ plugins/devkit/hooks/*              세 호스트가 공유하는 의도·개인
 | 규칙/지침 주입 | `hooks/hooks.json` | `hooks/hooks.json` | `rules/AGENTS.md` (네이티브 규칙) |
 | 발견 단위 | `commands/<name>.md` | `codex-skills/devkit-<name>/SKILL.md` | `skills/devkit-<name>/SKILL.md` |
 | 호출 | `/devkit:<name>` | `$devkit-<name>` | `devkit-<name>` |
-| 설치 | GitHub marketplace | GitHub marketplace | 클론한 로컬 경로 (`plugins/antigravity`) |
+| 설치 | GitHub marketplace | GitHub marketplace | GitHub 원격 URL (`plugins/antigravity`) |
 | 프로젝트 지침 | `CLAUDE.md` | `AGENTS.md` 우선 | `AGENTS.md` 우선 |
 | 세션 초기화 | `/clear` 또는 새 세션 | 새 스레드 또는 새 세션 | 새 세션 |
 
