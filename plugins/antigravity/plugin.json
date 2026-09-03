@@ -1,0 +1,17 @@
+{
+  "name": "devkit",
+  "version": "1.1.0",
+  "description": "의도 우선 작업, 명세, 백로그, 세션 인계, 도움말과 개인 설정을 공유하는 Antigravity 개발 워크플로 플러그인.",
+  "author": {
+    "name": "kynbeen"
+  },
+  "homepage": "https://github.com/kynbeen/devkit-marketplace",
+  "repository": "https://github.com/kynbeen/devkit-marketplace",
+  "license": "MIT",
+  "keywords": [
+    "development-workflow",
+    "handoff",
+    "intent-first",
+    "antigravity"
+  ]
+}

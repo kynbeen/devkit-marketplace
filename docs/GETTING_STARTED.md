@@ -58,22 +58,21 @@ devkit 훅은 세션 시작과 프롬프트 제출 때 Markdown 지침을 읽어
 
 ### Antigravity
 
-Antigravity(`agy`)는 GitHub marketplace 등록을 지원하지 않습니다. 저장소를 클론하고 패키지
-디렉터리를 직접 지정해 설치합니다.
+Antigravity(`agy`)는 GitHub marketplace 등록을 지원하지 않습니다. 저장소를 클론하고 Antigravity 전용 패키지
+디렉터리(`plugins/antigravity`)를 직접 지정해 설치합니다.
 
 ```bash
 git clone https://github.com/kynbeen/devkit-marketplace
 cd devkit-marketplace
-agy plugin validate plugins/devkit
-agy plugin install plugins/devkit
+agy plugin validate plugins/antigravity
+agy plugin install plugins/antigravity
 agy plugin enable devkit
 agy plugin list
 ```
 
-`agy plugin validate`가 `commands : 7 processed (converted to skills)`와 `hooks : 1 processed`를
-보고하면 패키지가 정상입니다. `agy plugin list`의 `devkit` 항목에 `commands`와 `hooks`가 나오면
-설치된 것입니다. Antigravity는 `commands/`의 일곱 개를 자기 스킬로 변환해 읽고, Codex 전용
-어댑터 디렉터리는 읽지 않습니다. 새 세션부터 적용됩니다.
+`agy plugin validate`가 `skills : 7 processed`를 보고하면 패키지가 정상입니다. `agy plugin list`의 `devkit` 항목에
+`skills`가 나오면 정상 설치된 것입니다. 플러그인이 로드되면 `devkit-clarify`, `devkit-handoff` 등 7개 스킬과
+의도 정책 및 작업 지침 규칙이 네이티브하게 적용됩니다. 새 세션부터 적용됩니다.
 
 ## 3. 첫 사용
 

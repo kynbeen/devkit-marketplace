@@ -26,11 +26,12 @@ plugins/devkit/hooks/*              세 호스트가 공유하는 의도·개인
 
 | 개념 | Claude Code | Codex | Antigravity |
 |---|---|---|---|
+| 패키지 위치 | `plugins/devkit` | `plugins/devkit` | `plugins/antigravity` |
 | 매니페스트 | `.claude-plugin/plugin.json` | `.codex-plugin/plugin.json` | `plugin.json` |
-| 훅 등록 | `hooks/hooks.json` | `hooks/hooks.json` | `hooks.json` |
-| 발견 단위 | `commands/<name>.md` | `codex-skills/devkit-<name>/SKILL.md` | `commands/<name>.md` |
-| 호출 | `/devkit:<name>` | `$devkit-<name>` | 변환된 스킬 |
-| 설치 | GitHub marketplace | GitHub marketplace | 클론한 로컬 경로 |
+| 규칙/지침 주입 | `hooks/hooks.json` | `hooks/hooks.json` | `rules/AGENTS.md` (네이티브 규칙) |
+| 발견 단위 | `commands/<name>.md` | `codex-skills/devkit-<name>/SKILL.md` | `skills/devkit-<name>/SKILL.md` |
+| 호출 | `/devkit:<name>` | `$devkit-<name>` | `devkit-<name>` |
+| 설치 | GitHub marketplace | GitHub marketplace | 클론한 로컬 경로 (`plugins/antigravity`) |
 | 프로젝트 지침 | `CLAUDE.md` | `AGENTS.md` 우선 | `AGENTS.md` 우선 |
 | 세션 초기화 | `/clear` 또는 새 세션 | 새 스레드 또는 새 세션 | 새 세션 |
 
@@ -38,14 +39,13 @@ Codex의 `SKILL.md`는 절차를 복제하지 않습니다. 대응하는 `comman
 `$ARGUMENTS`, `/devkit:*`, `CLAUDE.md`, `/clear` 같은 호스트 전용 표현만 Codex 의미로 바꿉니다.
 그래서 공통 절차를 고칠 때는 원칙적으로 명령 문서 한 곳만 수정합니다.
 
-Antigravity는 어댑터가 필요 없습니다. `agy plugin install`이 `commands/`를 자기 스킬 형식으로
-변환하므로 같은 일곱 개 원본을 그대로 읽습니다(`agy plugin validate`가
-`commands : 7 processed (converted to skills)`로 보고합니다). 호스트 전용 표현의 번역은
-`AGENTS.md`가 담당합니다.
+Antigravity는 플러그인 표준 규격으로 `skills/<skill_name>/SKILL.md`와 `rules/AGENTS.md`를 요구합니다.
+안티그래비티 런타임은 플러그인 루트의 `skills/` 디렉터리만 정식 스킬로 로드하므로, 전용 패키지 `plugins/antigravity`에
+7개 스킬 어댑터와 통합 규칙을 배치하여 완전한 네이티브 스킬로 제공합니다.
 
-## 어댑터가 `codex-skills/`에 있는 이유
+## 어댑터가 `codex-skills/`에 있고 Antigravity가 분리된 이유
 
-두 호스트 모두 플러그인 루트의 `skills/`를 **기본 검색 위치로 자동 추가**합니다. manifest의
+Claude Code는 플러그인 루트의 `skills/`를 **기본 검색 위치로 자동 추가**합니다. manifest의
 `skills` 필드도 기본값을 대체하지 않고 거기에 더할 뿐이라, `skills/`에 둔 파일을 한쪽에서만
 빼는 방법이 없습니다.
 
@@ -58,10 +58,11 @@ Codex의 `skills` 필드는 임의의 상대 경로를 받습니다. 그래서 �
 `.codex-plugin/plugin.json`이 그 경로를 가리키게 했습니다. Codex는 그대로 일곱 개를 발견하고,
 Claude Code는 자동 검색 대상이 아니므로 `commands/`의 일곱 개만 읽습니다.
 
-같은 이유로 Antigravity 매니페스트인 `plugin.json`에는 `skills` 경로를 선언하지 않습니다.
-선언하면 변환된 `commands/` 일곱 개 옆에 Codex 어댑터 일곱 개가 다시 붙습니다.
-`scripts/validate.ps1`이 `plugins/devkit/skills`가 다시 생기지 않는지, 그리고 Antigravity
-매니페스트에 `skills`가 들어가지 않는지 매번 확인합니다.
+반면 Antigravity는 플러그인 루트의 `skills/`를 필수 표준으로 요구합니다. 따라서 Claude Code와 Codex가 공유하는
+`plugins/devkit`에는 `skills/` 디렉터리를 일절 두지 않아 Claude Code의 14개 중복 로딩을 원천 방지하고,
+Antigravity는 전용 패키지 `plugins/antigravity`에 정식 `skills/`와 `rules/AGENTS.md`를 구성하여 제공합니다.
+`scripts/validate.ps1`이 `plugins/devkit/skills`가 생기지 않는지, 그리고 `plugins/antigravity/skills`에
+7개 스킬이 모두 존재하는지 매번 검증합니다.
 
 ## `commands/`를 유지하는 이유
 

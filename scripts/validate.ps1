@@ -68,7 +68,8 @@ function Get-TargetRelativePath {
 
 $claudeManifest = Read-JsonFile (Join-Path $pluginRoot ".claude-plugin/plugin.json")
 $codexManifest = Read-JsonFile (Join-Path $pluginRoot ".codex-plugin/plugin.json")
-$antigravityManifest = Read-JsonFile (Join-Path $pluginRoot "plugin.json")
+$antigravityRoot = Join-Path $repositoryRoot "plugins/antigravity"
+$antigravityManifest = Read-JsonFile (Join-Path $antigravityRoot "plugin.json")
 $claudeMarketplace = Read-JsonFile (Join-Path $repositoryRoot ".claude-plugin/marketplace.json")
 $codexMarketplace = Read-JsonFile (Join-Path $repositoryRoot ".agents/plugins/marketplace.json")
 $syncState = Read-JsonFile (Join-Path $repositoryRoot "sync/devkit-source.json")
@@ -91,17 +92,22 @@ $versions = @(@(
 ) | Select-Object -Unique)
 Assert-Condition ($versions.Count -eq 1) "Claude, Codex, Antigravity, and marketplace versions must match."
 
-# Antigravity reads plugin.json and hooks.json at the plugin root and converts commands/ into its
-# own skills. It never reads codex-skills/, so declaring a skills path here would only reintroduce
-# the duplicate-workflow problem that moved the adapters out of skills/ in the first place.
-Assert-Condition (Test-Path -LiteralPath (Join-Path $pluginRoot "hooks.json") -PathType Leaf) "Antigravity hook registration is missing: plugins/devkit/hooks.json"
-Assert-Condition ($null -eq $antigravityManifest.skills) "Antigravity manifest must not declare a skills path."
-
 # Claude Code discovers every directory named skills/ at the plugin root and ADDS it to the
-# components it already found in commands/. A skills/ directory here would therefore publish the
-# Codex adapters to Claude Code as a second, duplicate set of /devkit:devkit-* commands.
+# components it already found in commands/. A skills/ directory in plugins/devkit would therefore
+# publish the Codex adapters to Claude Code as a second, duplicate set of /devkit:devkit-* commands.
 Assert-Condition (-not (Test-Path -LiteralPath (Join-Path $pluginRoot "skills"))) "plugins/devkit/skills exists: Claude Code would load the Codex adapters as duplicate commands. Keep them in codex-skills/."
 Assert-Condition ($codexManifest.skills -eq "./codex-skills/") "Codex manifest must point skills at ./codex-skills/."
+
+# Antigravity requires a dedicated package with skills/<skill_name>/SKILL.md and rules/AGENTS.md.
+# It is packaged under plugins/antigravity so that Claude Code and Codex never scan its skills/ directory.
+Assert-Condition (Test-Path -LiteralPath (Join-Path $antigravityRoot "rules/AGENTS.md") -PathType Leaf) "Antigravity rule is missing: plugins/antigravity/rules/AGENTS.md"
+$antigravitySkills = Get-LeafNames (Join-Path $antigravityRoot "skills") "Directory"
+Assert-Condition (($antigravitySkills -join ',') -eq ($expectedWorkflows -join ',')) "Unexpected Antigravity skill set: $($antigravitySkills -join ', ')"
+
+foreach ($workflow in $expectedWorkflows) {
+    $agSkillPath = Join-Path $antigravityRoot "skills/devkit-$workflow/SKILL.md"
+    Assert-Condition (Test-Path -LiteralPath $agSkillPath -PathType Leaf) "Missing Antigravity skill: devkit-$workflow"
+}
 
 $commands = Get-LeafNames (Join-Path $pluginRoot "commands") "File"
 $codexSkills = Get-LeafNames (Join-Path $pluginRoot "codex-skills") "Directory"
@@ -131,4 +137,4 @@ foreach ($workflow in $expectedWorkflows) {
     Assert-Condition ($skillText.Contains("../../commands/$workflow.md")) "Codex skill does not link to its command: devkit-$workflow"
 }
 
-Write-Host "PASS: devkit $($versions[0]) publishes exactly seven Claude Code commands and seven Codex-only adapters."
+Write-Host "PASS: devkit $($versions[0]) publishes exactly seven Claude Code commands, seven Codex-only adapters, and seven Antigravity skills."

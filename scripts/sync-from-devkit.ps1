@@ -133,6 +133,7 @@ foreach ($relativePath in $state.verbatimFiles) {
 $claudeManifestPath = Join-Path $pluginRoot ".claude-plugin/plugin.json"
 $codexManifestPath = Join-Path $pluginRoot ".codex-plugin/plugin.json"
 $antigravityManifestPath = Join-Path $pluginRoot "plugin.json"
+$antigravityPkgManifestPath = Join-Path $marketplaceRoot "plugins/antigravity/plugin.json"
 $claudeMarketplacePath = Join-Path $marketplaceRoot ".claude-plugin/marketplace.json"
 $claudeManifest = Get-Content -LiteralPath $claudeManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
 $codexManifest = Get-Content -LiteralPath $codexManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -146,6 +147,20 @@ Write-JsonFile $claudeManifestPath $claudeManifest
 Write-JsonFile $codexManifestPath $codexManifest
 Write-JsonFile $antigravityManifestPath $antigravityManifest
 Write-JsonFile $claudeMarketplacePath $claudeMarketplace
+
+if (Test-Path -LiteralPath $antigravityPkgManifestPath) {
+    $agPkgManifest = Get-Content -LiteralPath $antigravityPkgManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
+    $agPkgManifest.version = $Version
+    Write-JsonFile $antigravityPkgManifestPath $agPkgManifest
+
+    $agSkills = Join-Path $marketplaceRoot "plugins/antigravity/skills"
+    New-Item -ItemType Directory -Path $agSkills -Force | Out-Null
+    Get-ChildItem -LiteralPath (Join-Path $pluginRoot "codex-skills") | Copy-Item -Destination $agSkills -Recurse -Force
+
+    $agCommands = Join-Path $marketplaceRoot "plugins/antigravity/commands"
+    New-Item -ItemType Directory -Path $agCommands -Force | Out-Null
+    Get-ChildItem -LiteralPath (Join-Path $pluginRoot "commands") | Copy-Item -Destination $agCommands -Recurse -Force
+}
 
 $state.sourceCommit = $sourceCommit
 if ($AcceptAdapted) {
