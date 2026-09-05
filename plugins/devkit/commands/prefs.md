@@ -59,11 +59,12 @@ description: 개인 작업 설정(hooks/preferences.md)을 보거나 고치고, 
 
 ## 2. 버전을 올린다
 
-아래 네 곳의 `version`을 같은 값으로 올린다.
+아래 다섯 곳의 `version`을 같은 값으로 올린다.
 
 - `plugins/devkit/.claude-plugin/plugin.json`
 - `plugins/devkit/.codex-plugin/plugin.json`
-- `plugins/devkit/plugin.json` (Antigravity)
+- `plugins/devkit/plugin.json`
+- `plugins/antigravity/plugin.json` (Antigravity)
 - `.claude-plugin/marketplace.json`의 devkit 항목
 
 설정만 바뀌었으면 패치 자리(`0.9.0` → `0.9.1`), 항목 구조가 바뀌었으면 마이너 자리를 올린다.
@@ -76,6 +77,7 @@ git add plugins/devkit/hooks/preferences.md \
   plugins/devkit/.claude-plugin/plugin.json \
   plugins/devkit/.codex-plugin/plugin.json \
   plugins/devkit/plugin.json \
+  plugins/antigravity/plugin.json \
   .claude-plugin/marketplace.json
 git commit -m "prefs: <무엇을 바꿨나>"
 git push

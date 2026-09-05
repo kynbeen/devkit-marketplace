@@ -11,18 +11,18 @@
 
 정확한 목록과 마지막 대조 상태는 [`sync/devkit-source.json`](../sync/devkit-source.json)에 있습니다.
 
-- `verbatimFiles`: 원본을 그대로 복사해도 되는 공통 워크플로·훅(Antigravity용 루트 `hooks.json` 포함)
-- `adaptedFiles`: 원본 변경을 감지하되 공개판에 맞게 사람이 반영해야 하는 파일. Antigravity
-  매니페스트인 루트 `plugin.json`도 여기 있습니다 — 공개판은 `homepage`·`repository`·`license`가
-  다르고, 원본과 달리 `skills` 경로를 선언하지 않습니다.
+- `verbatimFiles`: 원본을 그대로 복사해도 되는 공통 워크플로·훅
+- `adaptedFiles`: 원본 변경을 감지하되 공개판에 맞게 사람이 반영해야 하는 파일.
+  루트 `plugin.json`도 여기 있습니다 — 공개판은 `homepage`·`repository`·`license`가
+  다르고, `plugins/antigravity` 전용 매니페스트로 대응됩니다.
 - `excludedPaths`: 공개 패키지에 절대 들어오면 안 되는 경로
 - `marketplaceOnlyPaths`: 도움말과 호스트 manifest 등 공개판이 소유하는 파일
 - `pathRewrites`: 원본과 배포본의 디렉터리 이름이 다른 경우의 대응표
 
-경로 목록은 모두 **원본 devkit 기준**으로 적습니다. 원본은 Codex 어댑터를 `skills/`에 두지만
-배포본은 `codex-skills/`에 둡니다(이유는 [아키텍처 설명](ARCHITECTURE.md) 참고). 두 스크립트가
-`pathRewrites`를 읽어 복사·검사 대상 경로를 자동으로 바꾸므로, 목록에 배포본 경로를 직접 적지
-않습니다.
+경로 목록은 모두 **원본 devkit 기준**으로 적습니다. 두 저장소 모두 Claude Code의 자동 검색 중복 방지를 위해
+Codex 어댑터를 `codex-skills/`에 둡니다(이유는 [아키텍처 설명](ARCHITECTURE.md) 참고). Antigravity는 네이티브 스킬 규격을 위해
+전용 패키지(`plugins/antigravity`)로 분리되어 있으며 `rules/AGENTS.md`를 사용합니다. 두 스크립트가
+목록을 기반으로 복사·검사를 자동으로 수행합니다.
 
 ## 차이만 확인
 
@@ -77,7 +77,7 @@ git diff --check
 git diff
 pwsh -File scripts/validate.ps1
 claude plugin validate .
-agy plugin validate plugins/devkit
+agy plugin validate plugins/antigravity
 git add -A
 git commit -m "chore: sync devkit release 1.2.0"
 git push

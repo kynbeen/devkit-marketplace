@@ -79,6 +79,9 @@ agy plugin list
 
 # Codex
 $devkit-help
+
+# Antigravity
+devkit-help
 ```
 
 가장 흔한 시작은 막연한 요청을 구체화하는 것입니다.
@@ -89,6 +92,9 @@ $devkit-help
 
 # Codex
 $devkit-clarify 사용자들이 결제 단계에서 많이 이탈해
+
+# Antigravity
+devkit-clarify 사용자들이 결제 단계에서 많이 이탈해
 ```
 
 에이전트가 먼저 현재 저장소를 조사한 뒤 목표·성공 기준·범위·제약을 한 번의 질문 묶음으로
@@ -97,6 +103,7 @@ $devkit-clarify 사용자들이 결제 단계에서 많이 이탈해
 ```text
 /devkit:spec 방금 확정한 결제 이탈 개선 작업을 명세로 남겨줘
 $devkit-spec 방금 확정한 결제 이탈 개선 작업을 명세로 남겨줘
+devkit-spec 방금 확정한 결제 이탈 개선 작업을 명세로 남겨줘
 ```
 
 ## 4. 권장 작업 흐름
@@ -120,9 +127,10 @@ clarify → spec → 실제 개발 → handoff → 새 세션의 resume
 ```text
 /devkit:handoff 현재 상태를 기록하고 다음 세션에 넘겨줘
 $devkit-handoff 현재 상태를 기록하고 다음 스레드에 넘겨줘
+devkit-handoff 현재 상태를 기록하고 다음 세션에 넘겨줘
 ```
 
-다음 세션에서는 `/devkit:resume` 또는 `$devkit-resume`만 실행하면 됩니다.
+다음 세션에서는 `/devkit:resume`, `$devkit-resume`, 또는 `devkit-resume`만 실행하면 됩니다.
 
 ## 5. 업데이트
 
@@ -135,9 +143,9 @@ claude plugin update devkit@devkit
 codex plugin marketplace upgrade devkit
 codex plugin add devkit@devkit
 
-# Antigravity (클론한 저장소에서)
-git pull
-agy plugin install plugins/devkit
+# Antigravity (동일한 명령으로 업데이트)
+agy plugin install https://github.com/kynbeen/devkit-marketplace/plugins/antigravity
+agy plugin enable devkit
 ```
 
 설치와 달리 **업데이트는 적용에 재시작이 필요합니다.** `claude plugin update`가 이 점을 스스로

@@ -1,19 +1,20 @@
 # Claude Code, Codex, Antigravity의 관계
 
-Codex와 Antigravity 구현은 Claude Code 프로그램을 호출하는 어댑터가 아닙니다. 세 호스트가 하나의
-플러그인 패키지 안에서 같은 워크플로 문서를 각자의 방식으로 읽습니다.
+Codex와 Antigravity 구현은 Claude Code 프로그램을 호출하는 어댑터가 아닙니다. 세 호스트가 각자의 최적화된 패키지 안에서 같은 워크플로 문서를 각자의 방식으로 읽습니다.
 
 ```text
-plugins/devkit/commands/*.md        공통 워크플로 원본
+공통 워크플로 원본 (commands/*.md, hooks/*)
               │
-       ┌──────┼──────────────┐
-       │      │              │
-Claude Code  Antigravity   Codex
-명령으로     plugin.json으로 codex-skills/*/SKILL.md의 얇은 어댑터
-직접 발견    commands/ 를    └ 공통 원본을 읽고 호스트 표현만 번역
-·실행        스킬로 변환
-
-plugins/devkit/hooks/*              세 호스트가 공유하는 의도·개인 설정 지침
+       ┌──────┴──────────────────────────┐
+       ▼                                 ▼
+plugins/devkit/                   plugins/antigravity/
+(Claude Code & Codex)             (Antigravity 전용 패키지)
+├── commands/*.md                 ├── skills/devkit-*/SKILL.md
+│   └ Claude Code 직접 실행       │   └ 네이티브 스킬 규격
+├── codex-skills/*/SKILL.md       ├── rules/AGENTS.md
+│   └ Codex 전용 어댑터           │   └ 네이티브 작업 지침·규칙
+└── hooks/hooks.json              └── commands/*.md (스킬 참조 원본)
+    └ 세션 시작·프롬프트 훅
 ```
 
 ## 공통인 것

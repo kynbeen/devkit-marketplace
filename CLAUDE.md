@@ -1,20 +1,18 @@
 # devkit marketplace project rules
 
-This repository distributes the `devkit` plugin to Claude Code, Codex, and Antigravity users from
-one package. Claude Code and Codex install it from this GitHub marketplace; Antigravity installs
-the same `plugins/devkit` directory from a local clone, because `agy` has no GitHub marketplace.
+This repository distributes the `devkit` plugin to Claude Code, Codex, and Antigravity users.
+Claude Code and Codex install `plugins/devkit` from this GitHub marketplace; Antigravity installs
+the dedicated `plugins/antigravity` package via direct GitHub URL or local path.
 
 ## Distribution boundary
 
-- Keep `plugins/devkit/commands/` as the shared workflow source. Claude Code reads it directly and
-  Antigravity converts it into its own skills.
+- Keep `plugins/devkit/commands/` as the shared workflow source. Claude Code reads it directly.
 - Keep `plugins/devkit/codex-skills/devkit-*/SKILL.md` as thin Codex adapters to those commands.
 - Never create `plugins/devkit/skills/`. Every host adds that directory to component discovery
   automatically and no manifest field can remove it, so adapters placed there ship to Claude Code
   as a duplicate `/devkit:devkit-*` command set. `scripts/validate.ps1` enforces this.
-- Never declare a `skills` path in the Antigravity manifest `plugins/devkit/plugin.json`. It would
-  add the Codex adapters on top of the converted commands, which is the same duplication.
-  `scripts/validate.ps1` enforces this too.
+- Antigravity uses its own isolated package under `plugins/antigravity/` containing native `skills/`,
+  `rules/AGENTS.md`, and `plugin.json`.
 - Do not add unattended development tooling, Telegram integration, or the review workflow.
 - Never commit credentials, tokens, user identifiers, or machine-local configuration.
 - Keep Claude, Codex, and Antigravity plugin versions equal to the Claude marketplace entry version.
@@ -34,7 +32,7 @@ repository root:
 pwsh -File scripts/validate.ps1
 pwsh -File scripts/sync-from-devkit.ps1
 claude plugin validate .
-agy plugin validate plugins/devkit
+agy plugin validate plugins/antigravity
 ```
 
 Also install the repository as a local marketplace in isolated test homes before publishing a new

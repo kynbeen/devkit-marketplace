@@ -200,14 +200,18 @@ devkit-marketplace/
 ├── docs/
 ├── scripts/
 ├── sync/devkit-source.json
-└── plugins/devkit/
-    ├── .claude-plugin/plugin.json
-    ├── .codex-plugin/plugin.json
-    ├── plugin.json     Antigravity 플러그인 메타
-    ├── hooks.json      Antigravity 훅 등록
-    ├── commands/       공통 워크플로 원본 (Claude Code와 Antigravity가 직접 읽음)
-    ├── codex-skills/   Codex 전용 얇은 어댑터
-    └── hooks/
+└── plugins/
+    ├── devkit/               Claude Code / Codex 배포 패키지
+    │   ├── .claude-plugin/plugin.json
+    │   ├── .codex-plugin/plugin.json
+    │   ├── commands/         공통 워크플로 원본 (Claude Code가 직접 읽음)
+    │   ├── codex-skills/     Codex 전용 얇은 어댑터
+    │   └── hooks/            세션 훅
+    └── antigravity/          Antigravity 전용 배포 패키지
+        ├── plugin.json       Antigravity 매니페스트
+        ├── commands/         워크플로 원본 복사본
+        ├── rules/AGENTS.md   네이티브 작업 지침 및 규칙
+        └── skills/           7개 네이티브 스킬 어댑터
 ```
 
 ## 라이선스
